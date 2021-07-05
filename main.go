@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	errors2 "github.com/oktopriima/avenger/errors"
-	httpresponse2 "github.com/oktopriima/avenger/httpresponse"
+	"github.com/oktopriima/avenger/errors"
+	"github.com/oktopriima/avenger/httpresponse"
 	"io/ioutil"
 	"net/http"
 )
@@ -14,7 +14,7 @@ func main() {
 	e := echo.New()
 
 	echo.NotFoundHandler = func(c echo.Context) error {
-		return httpresponse2.PageNotFound(c)
+		return httpresponse.PageNotFound(c)
 	}
 
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -40,11 +40,11 @@ func main() {
 }
 
 func a(ctx echo.Context) error {
-	return httpresponse2.JSONErr(ctx, errors2.New(errors2.ErrorQueryDB, fmt.Errorf("test developer message")))
+	return httpresponse.JSONErr(ctx, errors.New(errors.ErrorQueryDB, fmt.Errorf("test developer message")))
 }
 
 func b(ctx echo.Context) error {
-	return httpresponse2.JSONSuccess(ctx, "pong")
+	return httpresponse.JSONSuccess(ctx, "pong")
 }
 
 func testError() error {
