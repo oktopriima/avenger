@@ -59,7 +59,7 @@ func usecaseExampleError(ctx context.Context) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*1)
 	defer cancel()
 
-	err := errors.New(constant.TimeOut, nil)
+	err := errors.New(constant.ErrorQueryDB, fmt.Errorf("this error example from your database"))
 	return nil, err
 }
 
