@@ -1,13 +1,16 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/oktopriima/avenger/constant"
 	"github.com/oktopriima/avenger/errors"
 	"github.com/oktopriima/avenger/httpresponse"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -33,22 +36,57 @@ func main() {
 		},
 	}))
 
-	e.GET("/", a)
-	e.GET("/ping", b)
+	e.GET("/error", a)
+	e.GET("/success", b)
 
 	e.Logger.Fatal(e.Start(":5000"))
 }
 
 func a(ctx echo.Context) error {
-	return httpresponse.JSONErr(ctx, errors.New(errors.ErrorQueryDB, fmt.Errorf("test developer message")))
+	// connect to your controller or usecase
+	// resp, err := callUsecaseFunction()
+	// return httpresponse.JSONErr(ctx, err)
+
+	resp, err := usecaseExampleError(ctx.Request().Context())
+	if err != nil {
+		return httpresponse.JSONErr(ctx, err)
+	}
+
+	return httpresponse.JSONSuccess(ctx, resp)
+}
+
+func usecaseExampleError(ctx context.Context) (interface{}, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*1)
+	defer cancel()
+
+	err := errors.New(constant.TimeOut, nil)
+	return nil, err
 }
 
 func b(ctx echo.Context) error {
-	return httpresponse.JSONSuccess(ctx, "pong")
+	// connect to your controller or usecase
+	// resp, err := callUsecaseFunction()
+	// return httpresponse.JSONErr(ctx, err)
+
+	resp, err := usecaseExampleSuccess(ctx.Request().Context())
+	if err != nil {
+		return httpresponse.JSONErr(ctx, err)
+	}
+
+	return httpresponse.JSONSuccess(ctx, resp)
+}
+
+func usecaseExampleSuccess(ctx context.Context) (interface{}, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*1)
+	defer cancel()
+
+	return struct {
+		User string `json:"user"`
+	}{User: "pong"}, nil
 }
 
 func testError() error {
-	r, err := http.Get("http://localhost:1323/not-found")
+	r, err := http.Get("http://localhost:1323/success")
 	if err != nil {
 		return err
 	}

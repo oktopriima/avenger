@@ -10,41 +10,21 @@ package errors
 
 import (
 	"fmt"
+	"github.com/oktopriima/avenger/constant"
 	"github.com/ztrue/tracerr"
 )
-
-const (
-	Success = iota
-	Undefined
-	ValidationError
-	InvalidRequest
-	ErrorQueryDB
-	Forbidden
-	PageNotFound
-	TimeOut
-)
-
-var ErrorMap = map[int]string{
-	Success:         "success",
-	Undefined:       "undefined error",
-	ValidationError: "validation errors",
-	InvalidRequest:  "invalid request",
-	ErrorQueryDB:    "error while query into database",
-	Forbidden:       "forbidden action",
-	PageNotFound:    "404 page not found",
-	TimeOut:         "request timeout",
-}
 
 func New(code int, err error) *Error {
 	var msg string
 	if err != nil {
+		// trace or put your custom log here
 		tracerr.PrintSourceColor(tracerr.Wrap(err), 1)
 		msg = err.Error()
 	}
 
 	return &Error{
 		Code:             code,
-		Message:          ErrorMap[code],
+		Message:          constant.ErrorMap[code],
 		DeveloperMessage: msg,
 	}
 }

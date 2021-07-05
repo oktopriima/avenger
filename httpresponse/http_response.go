@@ -10,19 +10,24 @@ package httpresponse
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/oktopriima/avenger/constant"
 	"github.com/oktopriima/avenger/errors"
 	"net/http"
 	"os"
 )
 
 var httpStatusCode = map[int]int{
-	errors.Undefined:       http.StatusBadRequest,
-	errors.ValidationError: http.StatusBadRequest,
-	errors.ErrorQueryDB:    http.StatusUnprocessableEntity,
-	errors.PageNotFound:    http.StatusNotFound,
-	errors.Forbidden:       http.StatusForbidden,
-	errors.InvalidRequest:  http.StatusBadRequest,
-	errors.TimeOut:         http.StatusRequestTimeout,
+	constant.Success:              http.StatusOK,
+	constant.Undefined:            http.StatusBadRequest,
+	constant.ValidationError:      http.StatusBadRequest,
+	constant.ErrorQueryDB:         http.StatusUnprocessableEntity,
+	constant.PageNotFound:         http.StatusNotFound,
+	constant.Forbidden:            http.StatusForbidden,
+	constant.InvalidRequest:       http.StatusBadRequest,
+	constant.TimeOut:              http.StatusRequestTimeout,
+	constant.AuthorizationMissing: http.StatusUnauthorized,
+	constant.FailedExtractedToken: http.StatusForbidden,
+	constant.TokenExpired:         http.StatusForbidden,
 }
 
 type errorStruct struct {
@@ -55,22 +60,22 @@ func JSONErr(ctx echo.Context, err error) error {
 			s.DeveloperMessage = err.Error()
 		}
 
-		s.Code = errors.Undefined
-		s.Message = errors.ErrorMap[errors.Undefined]
+		s.Code = constant.Undefined
+		s.Message = constant.ErrorMap[constant.Undefined]
 
-		return ctx.JSON(httpStatusCode[errors.Undefined], s)
+		return ctx.JSON(httpStatusCode[constant.Undefined], s)
 	}
 }
 
 func JSONSuccess(c echo.Context, data interface{}) error {
 	res := successStruct{
-		Code:    errors.Success,
-		Message: errors.ErrorMap[errors.Success],
+		Code:    constant.Success,
+		Message: constant.ErrorMap[constant.Success],
 		Data:    data,
 	}
 	return c.JSON(http.StatusOK, res)
 }
 
 func PageNotFound(ctx echo.Context) error {
-	return ctx.String(http.StatusNotFound, errors.ErrorMap[errors.PageNotFound])
+	return ctx.String(http.StatusNotFound, constant.ErrorMap[constant.PageNotFound])
 }
